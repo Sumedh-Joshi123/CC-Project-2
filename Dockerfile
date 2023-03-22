@@ -59,12 +59,14 @@ RUN apt-get install -y ffmpeg
 COPY requirements.txt ${FUNCTION_DIR}
 RUN python${RUNTIME_VERSION} -m pip install -r requirements.txt --target ${FUNCTION_DIR}
 COPY entry.sh /
+COPY encoding.dat /home/app/
 
 # Copy function code
 COPY handler.py ${FUNCTION_DIR}
 RUN chmod 777 /entry.sh
+RUN chmod 777 /home/app
 
 # Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
 # CMD [ "handler.handler" ]
 ENTRYPOINT [ "/entry.sh" ]
-CMD [ "handler.face_recognition_handler" ]
+CMD [ "frame.face_recognition_handler" ]
