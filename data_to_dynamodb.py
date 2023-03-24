@@ -3,8 +3,8 @@
 import boto3
 import json
 
-access_key="AKIAWEI56H2TMQQPD7UO"
-secret_access_key="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"
+access_key=""
+secret_access_key=""
 
 session=boto3.Session(aws_access_key_id=access_key,aws_secret_access_key=secret_access_key, region_name='us-east-1')
 client_dynamo=session.resource('dynamodb')
