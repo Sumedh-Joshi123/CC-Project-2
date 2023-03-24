@@ -1,7 +1,8 @@
 # Define global args
 # ARG FUNCTION_DIR="/tmp/"
 # ARG FUNCTION_DIR=${LAMBDA_TASK_ROOT}
-ARG FUNCTION_DIR="/home/app/"
+# ARG FUNCTION_DIR="/home/app/"
+ARG FUNCTION_DIR="/root/"
 ARG RUNTIME_VERSION="3.8"
 ARG DISTRO_VERSION="3.12"
 
@@ -54,19 +55,37 @@ RUN chmod 755 /usr/bin/aws-lambda-rie
 
 # Install ffmpeg
 RUN apt-get install -y ffmpeg
+RUN apt-get install -y awscli
+#   aws s3 cp s3://... ...
+#AWS Configure
+RUN mkdir ~/.aws
+# RUN --mount=type=secret,id=aws,target=/root/.aws/credentials 
+# RUN cd /root/.aws/
+# RUN cat credentials
+# RUN aws s3 cp s3://project-2-extra/credentials ~/.aws/ 
+# COPY credentials ~/.aws
+# RUN aws s3 cp s3://project-2-extra/config ~/.aws/ 
+# probably: created an extra s3 bucket, which stored access key csv file
+#RUN aws s3 cp s3://cloud-project-input/test_case_1/test_0.mp4 /home/app/.
+# COPY config ~/.aws
+#COPY test_0.mp4 ${FUNCTION_DIR}
+COPY encoding ${FUNCTION_DIR}
 
 # Copy handler function
 COPY requirements.txt ${FUNCTION_DIR}
 RUN python${RUNTIME_VERSION} -m pip install -r requirements.txt --target ${FUNCTION_DIR}
 COPY entry.sh /
-COPY encoding.dat /home/app/
+# COPY encoding.dat /home/app/
 
 # Copy function code
 COPY handler.py ${FUNCTION_DIR}
 RUN chmod 777 /entry.sh
-RUN chmod 777 /home/app
+# RUN chmod 777 /home/app
 
 # Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
 # CMD [ "handler.handler" ]
+# ENTRYPOINT [ "/usr/bin/aws-lambda-rie", "/usr/local/bin/python3", "-m", "awslambdaric" ]
 ENTRYPOINT [ "/entry.sh" ]
-CMD [ "frame.face_recognition_handler" ]
+# CMD [ "frame.face_recognition_handler" ]
+# ENTRYPOINT [ "/usr/local/bin/python3", "-m", "awslambdaric" ]
+CMD [ "handler.face_recognition_handler" ]
