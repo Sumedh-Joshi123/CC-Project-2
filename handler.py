@@ -22,7 +22,7 @@ import pickle
 import boto3
 import csv
 
-s3_client = boto3.client('s3', aws_access_key_id="AKIAWEI56H2TMQQPD7UO", aws_secret_access_key="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")
+s3_client = boto3.client('s3')
 
 def face_recognition_handler(event, context):
     bucket = event['Records'][0]['s3']['bucket']['name']
@@ -109,7 +109,7 @@ def createCSV(videoName, face_name):
 def uploads3(s3_bucket_name, csv_name):
     print("Entering S3 upload")
     object_name = csv_name.rsplit("/")[2]
-    # s3 = boto3.resource("s3", aws_access_key_id="AKIAWEI56H2TMQQPD7UO", aws_secret_access_key="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")
+    # s3 = boto3.resource("s3")
     # bucket = s3.Bucket(s3_bucket_name)
     s3_client.upload_file(csv_name, s3_bucket_name, object_name)
     print("File uploaded")
