@@ -23,16 +23,18 @@ import boto3
 import csv
 
 s3_client = boto3.client('s3')
+output_bucket = "output-bucket-cc-project-2"
 
 def face_recognition_handler(event, context):
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = event['Records'][0]['s3']['object']['key']
-    downloads3(bucket,key)
+    downloads3(bucket, key)
     video_location = "/tmp/" + key
     image_path = extract_frame(video_location)
     face_name = recognition(image_path)
-    csv_file_name = createCSV(key,face_name)
-    uploads3("output-bucket-project-2",csv_file_name)
+    csv_file_name = createCSV(key, face_name)
+    uploads3(output_bucket, csv_file_name)
+    delete_temp(image_path)
 
 def downloads3(s3_bucket_name, video_name):
     # session = boto3.session.Session()
@@ -56,7 +58,10 @@ def extract_frame(video_location):
     print(image_path)
     return image_path
 
-
+def delete_temp(image_path):
+	if os.path.exists(image_path):
+		os.remove(image_path)
+		print("Removed the file %s" % image_path)
 
 def recognition(image_path):
     image=face_recognition.load_image_file(image_path)
@@ -73,7 +78,7 @@ def recognition(image_path):
     #print("-----------------------------------------------------------")
     #print((all_face_encodings)['encoding'])
     face_encodings=all_face_encodings['encoding']
-    result=face_recognition.compare_faces(face_encodings,image_encoding)
+    result=face_recognition.compare_faces(face_encodings, image_encoding)
     for res in result:
         if res:
             idx=result.index(res)
