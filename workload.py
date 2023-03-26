@@ -1,8 +1,8 @@
 from boto3 import client as boto3_client
 import os
 
-input_bucket = "input-bucket-project-2"
-output_bucket = "output-bucket-project-2"
+input_bucket = "input-bucket-cc-project-2"
+output_bucket = "output-bucket-cc-project-2"
 test_cases = "test_cases/"
 
 def clear_input_bucket():
@@ -61,7 +61,7 @@ def workload_generator():
 
 # clear_input_bucket()
 clear_output_bucket()	
-workload_generator()	
+workload_generator()
 
 	
 

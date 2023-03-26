@@ -1,7 +1,6 @@
 # Define global args
 # ARG FUNCTION_DIR="/tmp/"
 # ARG FUNCTION_DIR=${LAMBDA_TASK_ROOT}
-# ARG FUNCTION_DIR="/home/app/"
 ARG FUNCTION_DIR="/root/"
 ARG RUNTIME_VERSION="3.8"
 ARG DISTRO_VERSION="3.12"
@@ -57,7 +56,7 @@ RUN chmod 755 /usr/bin/aws-lambda-rie
 RUN apt-get install -y ffmpeg
 RUN apt-get install -y awscli
 RUN apt-get install -y nano
-#   aws s3 cp s3://... ...
+
 #AWS Configure
 RUN mkdir ~/.aws
 COPY encoding ${FUNCTION_DIR}
@@ -66,17 +65,13 @@ COPY encoding ${FUNCTION_DIR}
 COPY requirements.txt ${FUNCTION_DIR}
 RUN python${RUNTIME_VERSION} -m pip install -r requirements.txt --target ${FUNCTION_DIR}
 COPY entry.sh ${FUNCTION_DIR}
-# COPY encoding.dat /home/app/
 
 # Copy function code
 COPY handler.py ${FUNCTION_DIR}
-RUN chmod 777 /root/entry.sh
-# RUN chmod 777 /home/app
+RUN chmod 777 /root/
 
+RUN ["chmod","+x","/root/entry.sh"]
 # Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
 # CMD [ "handler.handler" ]
-# ENTRYPOINT [ "/usr/bin/aws-lambda-rie", "/usr/local/bin/python3", "-m", "awslambdaric" ]
 ENTRYPOINT [ "/root/entry.sh" ]
-# CMD [ "frame.face_recognition_handler" ]
-# ENTRYPOINT [ "/usr/local/bin/python3", "-m", "awslambdaric" ]
 CMD [ "handler.face_recognition_handler" ]
